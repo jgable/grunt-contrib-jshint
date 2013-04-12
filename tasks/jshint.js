@@ -8,6 +8,8 @@
 
 'use strict';
 
+var os = require("os");
+
 module.exports = function(grunt) {
 
   // Internal lib.
@@ -16,8 +18,12 @@ module.exports = function(grunt) {
   grunt.registerMultiTask('jshint', 'Validate files with JSHint.', function() {
     // Merge task-specific and/or target-specific options with these defaults.
     var options = this.options({
-      force: false
+      force: false,
+      cache: false
     });
+
+    var self = this,
+        done = this.async();
 
     // Report JSHint errors but dont fail the task
     var force = options.force;
@@ -49,16 +55,22 @@ module.exports = function(grunt) {
     grunt.verbose.writeflags(globals, 'JSHint globals');
 
     // Lint specified files.
-    var files = this.filesSrc;
-    files.forEach(function(filepath) {
-      jshint.lint(grunt.file.read(filepath), options, globals, filepath);
+    var files = this.filesSrc,
+        lintFile = function(filepath, cb) {
+          jshint.lint(grunt.file.read(filepath), options, globals, filepath, cb);
+        };
+    
+    grunt.util.async.forEachSeries(files, lintFile, function(err) {
+      // Fail task if errors were logged except if force was set.
+      if (err || self.errorCount) { 
+        return done(force);
+      }
+
+      // Otherwise, print a success message.
+      grunt.log.ok(files.length + ' file' + (files.length === 1 ? '' : 's') + ' lint free.');  
+      done();
     });
-
-    // Fail task if errors were logged except if force was set.
-    if (this.errorCount) { return force; }
-
-    // Otherwise, print a success message.
-    grunt.log.ok(files.length + ' file' + (files.length === 1 ? '' : 's') + ' lint free.');
+    
   });
 
 };

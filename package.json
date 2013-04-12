@@ -28,7 +28,8 @@
     "test": "grunt test"
   },
   "dependencies": {
-    "jshint": "~1.1.0"
+    "jshint": "~1.1.0",
+    "cache-swap": "0.0.2"
   },
   "devDependencies": {
     "grunt-contrib-nodeunit": "~0.1.2",

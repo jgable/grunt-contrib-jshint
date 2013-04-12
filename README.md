@@ -65,6 +65,12 @@ Default value: `false`
 
 Set `force` to `true` to report JSHint errors but not fail the task.
 
+#### cache
+Type: `Boolean`
+Default value: `false`
+
+Set `cache` to `true` to cache successfully hinted files by a file content hash.  If a files contents change, or the version of `grunt-contrib-jshint` is changed, the file cache will be invalidated.
+
 ### Usage examples
 
 #### Wildcards
